@@ -15,8 +15,9 @@ async function main() {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Define port
-const PORT = 3000;
+// Define port to assigned or 3000
+const PORT = process.env.PORT || 3000;
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
