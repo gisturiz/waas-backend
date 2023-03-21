@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 
 const modelsSchema = new mongoose.Schema({
-    name: String,
-    key: String,
-    pool: String
+    poolName: String,
+    deviceID: String,
+    deviceGroupName: String,
+    address: String,
 });
 
 module.exports = mongoose.model('models', modelsSchema);
