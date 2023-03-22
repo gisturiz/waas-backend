@@ -5,6 +5,8 @@ const routes = require('./routes/routes');
 const helmet = require('helmet');
 const cors = require('cors');
 
+require('dotenv').config()
+
 const app = express();
 
 // Uses
