@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api', routes);
 
 async function main() {
-    await moongoose.connect('mongodb://localhost:27017/test');
+    await moongoose.connect(process.env.MONGO_URL);
 };
 
 main()
