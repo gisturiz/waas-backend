@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api', routes);
 
 async function main() {
-    await moongoose.connect(process.env.MONGO_URL);
+    await moongoose.connect(process.env.MONGODB_URI);
 };
 
 main()
