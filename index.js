@@ -13,7 +13,7 @@ app.use(express.json());
 app.use('/api', routes);
 
 // async function main() {
-//     await moongoose.connect(process.env.MONGODB_URI);
+//     await moongoose.connect("mongodb://127.0.0.1:27017/test");
 // };
 
 // main()
