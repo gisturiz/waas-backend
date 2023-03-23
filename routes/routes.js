@@ -3,7 +3,7 @@ const router = express.Router();
 const controller = require('../controllers/controllers');
 
 router.post('/create', controller.createController);
-router.get('/:id', controller.getControllerById);
+router.get('/:username', controller.getControllerById);
 router.put('/:id', controller.updateControllerById);
 router.delete('/:id', controller.deleteControllerById);
 

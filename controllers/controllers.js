@@ -20,7 +20,7 @@ exports.createController = (req, res) => {
                 if (result) {
                     res.status(200).json(result);
                 } else {
-                    res.status(404).json({ message: "User not found" });
+                    res.status(404).json({ message: "Failed to create user" });
                 }
             })
             .catch(err => {
@@ -35,8 +35,8 @@ exports.createController = (req, res) => {
 
 // Get user by ID
 exports.getControllerById = (req, res) => {
-    client.connect(err => {
-        client.db("waas").collection("users").findOne(req.params.id)
+    async function getListing(client, userName) {
+        await client.db("waas").collection("users").findOne({username: userName})
             .then(result => {
                 if (result) {
                     res.status(200).json(result);
@@ -48,9 +48,10 @@ exports.getControllerById = (req, res) => {
                 res.status(500).json({
                     message: "Failed to fetch user"
                 });
-            });
-        client.close();
-    })
+            })
+    };
+
+    getListing(client, req.params.username);
 };
 
 // Update User by ID
