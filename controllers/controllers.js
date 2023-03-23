@@ -11,28 +11,16 @@ exports.createController = (req, res) => {
         username: req.body.username
     });
 
-    let db_connect = dbo.getDb("waas");
-    db_connect
-        .collection("users")
-        .insertOne(controller)
-        .then(result => {
-            res.status(201).json({
-                message: "User added successfully",
-                post: {
-                    ...result,
-                    id: result._id,
-                },
-            });
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: "Failed to create user"
-            });
-        });
+    async function createListing(db, newListing) {
+        const result = await db.collection("users").insertOne(newListing);
+        console.log(`New listing created with the following id: ${result.insertedId}`);
+    }
+
+    createListing(dbo.getDb("waas"), controller);
 };
 
 // Get user by ID
-exports.getControllerById = (req, res, next) => {
+exports.getControllerById = (req, res) => {
     client.connect(err => {
         client.db("waas").collection("users").findOne(req.params.id)
             .then(result => {
