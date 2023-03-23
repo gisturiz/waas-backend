@@ -1,12 +1,8 @@
 const model = require("../models/models");
-const { MongoClient, ServerApiVersion } = require('mongodb');
-
-require('dotenv').config()
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const dbo = require("../db/connection.js");
 
 // Create user
-exports.createController = (req, res, next) => {
+exports.createController = (req, res) => {
     const controller = new model({
         deviceGroupName: req.body.deviceGroupName,
         address: req.body.address,
@@ -14,24 +10,25 @@ exports.createController = (req, res, next) => {
         deviceId: req.body.deviceId,
         username: req.body.username
     });
-    client.connect(err => {
-        client.db("waas").collection("users").insertOne(controller)
-            .then(result => {
-                res.status(201).json({
-                    message: "User added successfully",
-                    post: {
-                        ...result,
-                        id: result._id,
-                    },
-                });
-            })
-            .catch(err => {
-                res.status(500).json({
-                    message: "Failed to create user"
-                });
+
+    let db_connect = dbo.getDb("waas");
+    db_connect
+        .collection("users")
+        .insertOne(controller)
+        .then(result => {
+            res.status(201).json({
+                message: "User added successfully",
+                post: {
+                    ...result,
+                    id: result._id,
+                },
             });
-        client.close();
-    });
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: "Failed to create user"
+            });
+        });
 };
 
 // Get user by ID
