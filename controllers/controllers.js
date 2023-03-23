@@ -16,7 +16,9 @@ exports.createController = (req, res) => {
         console.log(`New listing created with the following id: ${result.insertedId}`);
     }
 
-    createListing(dbo.getDb("waas"), controller);
+    const db_connect = dbo.getDb("waas");
+
+    createListing(db_connect, controller);
 };
 
 // Get user by ID
