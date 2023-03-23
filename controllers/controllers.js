@@ -15,9 +15,20 @@ exports.createController = (req, res) => {
     });
 
     async function createListing(client, newListing) {
-        const result = await client.db("waas").collection("users").insertOne(newListing);
-        console.log(`New listing created with the following id: ${result.insertedId}`);
-    }
+        await client.db("waas").collection("users").insertOne(newListing)
+            .then(result => {
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: "User not found" });
+                }
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: "Failed to fetch user"
+                });
+            });
+    };
 
     createListing(client, controller);
 };
