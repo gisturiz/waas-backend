@@ -1,5 +1,8 @@
 const model = require("../models/models");
-const dbo = require("../db/connection.js");
+const { MongoClient, ServerApiVersion } = require('mongodb');
+require("dotenv").config();
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 // Create user
 exports.createController = (req, res) => {
@@ -11,14 +14,14 @@ exports.createController = (req, res) => {
         username: req.body.username
     });
 
-    async function createListing(db, newListing) {
-        const result = await db.collection("users").insertOne(newListing);
+    async function createListing(client, newListing) {
+        const result = await client.db("waas").collection("users").insertOne(newListing);
         console.log(`New listing created with the following id: ${result.insertedId}`);
     }
 
     const db_connect = dbo.getDb("waas");
 
-    createListing(db_connect, controller);
+    createListing(client, controller);
 };
 
 // Get user by ID
