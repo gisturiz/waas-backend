@@ -33,7 +33,7 @@ exports.createController = (req, res) => {
     createListing(client, controller);
 };
 
-// Get user by ID
+// Get user by username
 exports.getControllerById = (req, res) => {
     async function getListing(client, userName) {
         await client.db("waas").collection("users").findOne({ username: userName })
@@ -54,34 +54,53 @@ exports.getControllerById = (req, res) => {
     getListing(client, req.params.username);
 };
 
-// Update User by ID
-exports.updateControllerById = (req, res, next) => {
-    const controller = new model({
-        _id: req.params.id,
-        name: req.body.name,
-        key: req.body.key,
-        pool: req.body.pool
-    });
-    model.updateOne({ _id: req.params.id }, controller)
-        .then(result => {
-            res.status(200).json({ message: "Update successful" });
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: "Failed to update user"
+// Update User by username 
+exports.updateControllerById = (req, res) => {
+    const controller = {
+        deviceGroupName: req.body.deviceGroupName,
+        address: req.body.address,
+        deviceData: req.body.deviceData,
+        deviceId: req.body.deviceId,
+        username: req.body.username.toLowerCase()
+    };
+
+    async function updateListing(client, userName, updatedListing) {
+        await client.db("waas").collection("users").updateOne({ username: userName }, { $set: updatedListing })
+            .then(result => {
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: "Failed to update user" });
+                }
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: "Failed to fetch user"
+                });
             });
-        });
+    };
+
+    updateListing(client, req.params.username, controller);
 };
 
-// Delete User by ID
-exports.deleteControllerById = (req, res, next) => {
-    model.deleteOne({ _id: req.params.id })
-        .then(result => {
-            res.status(200).json({ message: "User deleted" });
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: "Failed to delete user"
-            });
-        });
+// Delete User by username
+exports.deleteControllerById = (req, res) => {
+    async function deleteListing(client, userName) {
+        await client.db("waas").collection("users").deleteOne({ username: userName })
+            .then(result => {
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: "Failed to delete user" });
+                }
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: "Failed to fetch user"
+                });
+            })
+    };
+
+    deleteListing(client, req.params.username);
+
 };
