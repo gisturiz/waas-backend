@@ -11,7 +11,7 @@ exports.createController = (req, res) => {
         address: req.body.address,
         deviceData: req.body.deviceData,
         deviceId: req.body.deviceId,
-        username: req.body.username
+        username: req.body.username.toLowerCase()
     });
 
     async function createListing(client, newListing) {
@@ -36,7 +36,7 @@ exports.createController = (req, res) => {
 // Get user by ID
 exports.getControllerById = (req, res) => {
     async function getListing(client, userName) {
-        await client.db("waas").collection("users").findOne({username: userName})
+        await client.db("waas").collection("users").findOne({ username: userName })
             .then(result => {
                 if (result) {
                     res.status(200).json(result);
