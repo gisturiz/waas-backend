@@ -1,28 +1,24 @@
 const express = require('express');
-const moongoose = require('mongoose');
-const bodyParser = require('body-parser');
+//const moongoose = require('mongoose');
 const routes = require('./routes/routes');
 const helmet = require('helmet');
 const cors = require('cors');
-
-require('dotenv').config()
 
 const app = express();
 
 // Uses
 app.use(helmet());
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 app.use('/api', routes);
 
-async function main() {
-    await moongoose.connect(process.env.MONGODB_URI);
-};
+// async function main() {
+//     await moongoose.connect(process.env.MONGODB_URI);
+// };
 
-main()
-    .then(res => console.log(res))
-    .catch(err => console.log(err));
+// main()
+//     .then(res => console.log(res))
+//     .catch(err => console.log(err));
 
 
 // Define port to assigned or 3000

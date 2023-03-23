@@ -1,4 +1,9 @@
 const model = require("../models/models");
+const { MongoClient, ServerApiVersion } = require('mongodb');
+
+require('dotenv').config()
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 // Create user
 exports.createController = (req, res, next) => {
@@ -9,39 +14,44 @@ exports.createController = (req, res, next) => {
         deviceId: req.body.deviceId,
         username: req.body.username
     });
-    controller
-        .save()
-        .then(result => {
-            res.status(201).json({
-                message: "User added successfully",
-                post: {
-                    ...result,
-                    id: result._id,
-                },
+    client.connect(err => {
+        client.db("waas").collection("users").insertOne(controller)
+            .then(result => {
+                res.status(201).json({
+                    message: "User added successfully",
+                    post: {
+                        ...result,
+                        id: result._id,
+                    },
+                });
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: "Failed to create user"
+                });
             });
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: "Failed to create user"
-            });
-        });
+        client.close();
+    });
 };
 
 // Get user by ID
 exports.getControllerById = (req, res, next) => {
-    model.findById(req.params.id)
-        .then(result => {
-            if (result) {
-                res.status(200).json(result);
-            } else {
-                res.status(404).json({ message: "User not found" });
-            }
-        })
-        .catch(err => {
-            res.status(500).json({
-                message: "Failed to fetch user"
+    client.connect(err => {
+        client.db("waas").collection("users").findOne(req.params.id)
+            .then(result => {
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: "User not found" });
+                }
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: "Failed to fetch user"
+                });
             });
-        });
+        client.close();
+    })
 };
 
 // Update User by ID
